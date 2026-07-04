@@ -1,8 +1,8 @@
-use std::fs;
+use std::{fs, path::Path};
 
-pub fn detect(path: &str) -> Option<&'static str> {
+pub fn detect(path: &Path) -> Option<&'static str> {
     // Detect language from file path or extension.
-    if let Some(lang) = tree_sitter_language_pack::detect_language(path) {
+    if let Some(lang) = tree_sitter_language_pack::detect_language(path.to_str()?) {
         return Some(lang);
     }
 
