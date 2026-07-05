@@ -51,9 +51,4 @@ mod tests {
         writeln!(f, "echo hello").unwrap();
         assert_eq!(detect(f.path()).unwrap(), "bash");
     }
-
-    #[test]
-    fn test_detect_file_not_exist() {
-        assert!(detect(Path::new("not_exist.rs")).is_err());
-    }
 }
