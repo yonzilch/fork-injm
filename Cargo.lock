@@ -122,9 +122,9 @@ checksum = "8ae3f5d315924270530207e2a68396c3cc547f6dca3fbdca317cfb1a51edb593"
 
 [[package]]
 name = "cc"
-version = "1.2.65"
+version = "1.2.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e228eec9be7c17ccb640b59b36a5cd805ea2a564a4c5e162c2f659fea30d3b96"
+checksum = "f5d6cac793997bd970000024b2934968efe83b382de4fdcf4fcb46b6ee4ad996"
 dependencies = [
  "find-msvc-tools",
  "jobserver",
@@ -1043,9 +1043,9 @@ checksum = "009994f150cc0cd50ff54917d5bc8bffe8cad10ca10d81c34da2ec421ae61782"
 
 [[package]]
 name = "tree-sitter-language-pack"
-version = "1.12.3"
+version = "1.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32def7d253a2662db9a32196440b07bb0e9731a2133dbad0ed42239f94d548ea"
+checksum = "d49e30d1927ccc08599c054380bda399817781f74eb9184007e90606c7ff3a2c"
 dependencies = [
  "ahash",
  "cc",
