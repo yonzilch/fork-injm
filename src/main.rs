@@ -1,12 +1,12 @@
 mod cli;
 mod detector;
-use anyhow::anyhow;
-use clap::Parser;
 
-fn main() -> anyhow::Result<()> {
+use clap::Parser;
+use std::fs;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = cli::Cli::parse();
-    let lang = detector::detect(&cli.output)
-        .ok_or_else(|| anyhow!("unsupported file type: {:?}", cli.output))?;
+    let lang = detector::detect(&cli.output)?;
     println!("language is {}", lang);
 
     Ok(())

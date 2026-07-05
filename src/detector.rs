@@ -1,19 +1,23 @@
 use std::{fs, path::Path};
 
-pub fn detect(path: &Path) -> Option<&'static str> {
+type Error = Box<dyn std::error::Error>;
+
+pub fn detect(path: &Path) -> Result<&'static str, Error> {
     // Detect language from file path or extension.
-    if let Some(lang) = tree_sitter_language_pack::detect_language(path.to_str()?) {
-        return Some(lang);
+    if let Some(lang) =
+        tree_sitter_language_pack::detect_language(path.to_str().ok_or("invalid path")?)
+    {
+        return Ok(lang);
     }
 
     // Detect from shebang line.
     if let Ok(content) = fs::read_to_string(path) {
         if let Some(lang) = tree_sitter_language_pack::detect_language_from_content(&content) {
-            return Some(lang);
+            return Ok(lang);
         }
     }
 
-    None
+    Err("unsupported file type".into())
 }
 
 #[cfg(test)]
@@ -22,17 +26,17 @@ mod tests {
 
     #[test]
     fn test_detect_from_extension() {
-        assert_eq!(detect(Path::new("main.rs")), Some("rust"));
-        assert_eq!(detect(Path::new("main.py")), Some("python"));
-        assert_eq!(detect(Path::new("main.js")), Some("javascript"));
-        assert_eq!(detect(Path::new("main.go")), Some("go"));
-        assert_eq!(detect(Path::new("main.md")), Some("markdown"));
+        assert_eq!(detect(Path::new("main.rs")).unwrap(), "rust");
+        assert_eq!(detect(Path::new("main.py")).unwrap(), "python");
+        assert_eq!(detect(Path::new("main.js")).unwrap(), "javascript");
+        assert_eq!(detect(Path::new("main.go")).unwrap(), "go");
+        assert_eq!(detect(Path::new("main.md")).unwrap(), "markdown");
     }
 
     #[test]
     fn test_detect_unknown_extension() {
-        assert_eq!(detect(Path::new("main.xyz")), None);
-        assert_eq!(detect(Path::new("noextension")), None);
+        assert!(detect(Path::new("main.xyz")).is_err());
+        assert!(detect(Path::new("noextension")).is_err());
     }
 
     #[test]
@@ -41,11 +45,16 @@ mod tests {
         let mut f = tempfile::NamedTempFile::new().unwrap();
         writeln!(f, "#!/usr/bin/env python3").unwrap();
         writeln!(f, "print('hello')").unwrap();
-        assert_eq!(detect(f.path()), Some("python"));
+        assert_eq!(detect(f.path()).unwrap(), "python");
 
         let mut f = tempfile::NamedTempFile::new().unwrap();
         writeln!(f, "#!/usr/bin/env bash").unwrap();
         writeln!(f, "echo hello").unwrap();
-        assert_eq!(detect(f.path()), Some("bash"));
+        assert_eq!(detect(f.path()).unwrap(), "bash");
+    }
+
+    #[test]
+    fn test_detect_file_not_exist() {
+        assert!(detect(Path::new("not_exist.rs")).is_err());
     }
 }
